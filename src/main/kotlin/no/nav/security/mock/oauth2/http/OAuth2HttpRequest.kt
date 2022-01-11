@@ -9,6 +9,7 @@ import no.nav.security.mock.oauth2.extensions.isAuthorizationEndpointUrl
 import no.nav.security.mock.oauth2.extensions.isDebuggerCallbackUrl
 import no.nav.security.mock.oauth2.extensions.isDebuggerUrl
 import no.nav.security.mock.oauth2.extensions.isEndSessionEndpointUrl
+import no.nav.security.mock.oauth2.extensions.isFrontChannelLogout
 import no.nav.security.mock.oauth2.extensions.isJwksUrl
 import no.nav.security.mock.oauth2.extensions.isTokenEndpointUrl
 import no.nav.security.mock.oauth2.extensions.isWellKnownUrl
@@ -30,6 +31,7 @@ import no.nav.security.mock.oauth2.http.RequestType.PREFLIGHT
 import no.nav.security.mock.oauth2.http.RequestType.TOKEN
 import no.nav.security.mock.oauth2.http.RequestType.UNKNOWN
 import no.nav.security.mock.oauth2.http.RequestType.WELL_KNOWN
+import no.nav.security.mock.oauth2.http.RequestType.FRONTCHANNEL
 import no.nav.security.mock.oauth2.missingParameter
 import okhttp3.Headers
 import okhttp3.HttpUrl
@@ -82,6 +84,7 @@ data class OAuth2HttpRequest(
         url.isTokenEndpointUrl() -> TOKEN
         url.isEndSessionEndpointUrl() -> END_SESSION
         url.isJwksUrl() -> JWKS
+        url.isFrontChannelLogout() -> FRONTCHANNEL
         url.isDebuggerUrl() -> DEBUGGER
         url.isDebuggerCallbackUrl() -> DEBUGGER_CALLBACK
         url.encodedPath == "/favicon.ico" -> FAVICON
@@ -130,5 +133,6 @@ data class OAuth2HttpRequest(
 
 enum class RequestType {
     WELL_KNOWN, AUTHORIZATION, TOKEN, END_SESSION, JWKS,
+    FRONTCHANNEL,
     DEBUGGER, DEBUGGER_CALLBACK, FAVICON, PREFLIGHT, UNKNOWN
 }

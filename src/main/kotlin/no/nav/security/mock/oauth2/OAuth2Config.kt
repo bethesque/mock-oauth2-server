@@ -14,6 +14,7 @@ import no.nav.security.mock.oauth2.http.NettyWrapper
 import no.nav.security.mock.oauth2.http.OAuth2HttpServer
 import no.nav.security.mock.oauth2.http.Ssl
 import no.nav.security.mock.oauth2.http.SslKeystore
+import no.nav.security.mock.oauth2.logout.LogoutManagement
 import no.nav.security.mock.oauth2.token.KeyProvider
 import no.nav.security.mock.oauth2.token.OAuth2TokenCallback
 import no.nav.security.mock.oauth2.token.OAuth2TokenProvider
@@ -28,7 +29,9 @@ data class OAuth2Config @JvmOverloads constructor(
     @JsonDeserialize(contentAs = RequestMappingTokenCallback::class)
     val tokenCallbacks: Set<OAuth2TokenCallback> = emptySet(),
     @JsonDeserialize(using = OAuth2HttpServerDeserializer::class)
-    val httpServer: OAuth2HttpServer = MockWebServerWrapper()
+    val httpServer: OAuth2HttpServer = MockWebServerWrapper(),
+    // @JsonDeserialize(using = OAuth2HttpServerDeserializer::class)
+    val logout: LogoutManagement = LogoutManagement()
 ) {
 
     class OAuth2TokenProviderDeserializer : JsonDeserializer<OAuth2TokenProvider>() {

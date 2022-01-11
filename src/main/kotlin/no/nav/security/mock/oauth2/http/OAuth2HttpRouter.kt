@@ -24,7 +24,7 @@ interface Route : RequestHandler {
             }
         }
 
-        fun any(vararg path: String, requestHandler: RequestHandler) = apply {
+        fun any(vararg path: String, requestHandler: (OAuth2HttpRequest) -> Unit) = apply {
             path.forEach {
                 addRoute(it, null, requestHandler)
             }

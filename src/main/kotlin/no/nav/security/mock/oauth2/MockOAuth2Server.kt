@@ -13,7 +13,9 @@ import com.nimbusds.oauth2.sdk.auth.Secret
 import com.nimbusds.oauth2.sdk.id.ClientID
 import mu.KotlinLogging
 import no.nav.security.mock.oauth2.extensions.toAuthorizationEndpointUrl
+import no.nav.security.mock.oauth2.extensions.toBackchannelLogout
 import no.nav.security.mock.oauth2.extensions.toEndSessionEndpointUrl
+import no.nav.security.mock.oauth2.extensions.toFrontchannelLogout
 import no.nav.security.mock.oauth2.extensions.toJwksUrl
 import no.nav.security.mock.oauth2.extensions.toOAuth2AuthorizationServerMetadataUrl
 import no.nav.security.mock.oauth2.extensions.toTokenEndpointUrl
@@ -34,7 +36,7 @@ import java.io.IOException
 import java.net.InetAddress
 import java.net.URI
 import java.time.Duration
-import java.util.UUID
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 private val log = KotlinLogging.logger { }
@@ -103,6 +105,9 @@ open class MockOAuth2Server(
         )
         return config.tokenProvider.accessToken(tokenRequest, issuerUrl, tokenCallback, null)
     }
+
+    fun frontChannelLogout(issuerId: String): HttpUrl = url(issuerId).toFrontchannelLogout()
+    fun backChannelLogout(issuerId: String): HttpUrl = url(issuerId).toBackchannelLogout()
 
     @JvmOverloads
     fun issueToken(

@@ -3,9 +3,11 @@ package no.nav.security.mock.oauth2.extensions
 import com.nimbusds.oauth2.sdk.OAuth2Error
 import no.nav.security.mock.oauth2.OAuth2Exception
 import no.nav.security.mock.oauth2.extensions.OAuth2Endpoints.AUTHORIZATION
+import no.nav.security.mock.oauth2.extensions.OAuth2Endpoints.BACKCHANNEL_LOGOUT
 import no.nav.security.mock.oauth2.extensions.OAuth2Endpoints.DEBUGGER
 import no.nav.security.mock.oauth2.extensions.OAuth2Endpoints.DEBUGGER_CALLBACK
 import no.nav.security.mock.oauth2.extensions.OAuth2Endpoints.END_SESSION
+import no.nav.security.mock.oauth2.extensions.OAuth2Endpoints.FRONTCHANNEL_LOGOUT
 import no.nav.security.mock.oauth2.extensions.OAuth2Endpoints.JWKS
 import no.nav.security.mock.oauth2.extensions.OAuth2Endpoints.OAUTH2_WELL_KNOWN
 import no.nav.security.mock.oauth2.extensions.OAuth2Endpoints.OIDC_WELL_KNOWN
@@ -21,6 +23,8 @@ object OAuth2Endpoints {
     const val END_SESSION = "/endsession"
     const val JWKS = "/jwks"
     const val USER_INFO = "/userinfo"
+    const val FRONTCHANNEL_LOGOUT = "/frontchannel_logout"
+    const val BACKCHANNEL_LOGOUT = "/backchannel_logout"
     const val DEBUGGER = "/debugger"
     const val DEBUGGER_CALLBACK = "/debugger/callback"
 
@@ -43,6 +47,8 @@ fun HttpUrl.isTokenEndpointUrl(): Boolean = this.endsWith(TOKEN)
 fun HttpUrl.isEndSessionEndpointUrl(): Boolean = this.endsWith(END_SESSION)
 fun HttpUrl.isJwksUrl(): Boolean = this.endsWith(JWKS)
 fun HttpUrl.isUserInfoUrl(): Boolean = this.endsWith(USER_INFO)
+fun HttpUrl.isFrontChannelLogout(): Boolean = this.endsWith(FRONTCHANNEL_LOGOUT)
+fun HttpUrl.isBackChannelLogout(): Boolean = this.endsWith(BACKCHANNEL_LOGOUT)
 fun HttpUrl.isDebuggerUrl(): Boolean = this.endsWith(DEBUGGER)
 fun HttpUrl.isDebuggerCallbackUrl(): Boolean = this.endsWith(DEBUGGER_CALLBACK)
 
@@ -54,6 +60,8 @@ fun HttpUrl.toTokenEndpointUrl(): HttpUrl = issuer(TOKEN)
 fun HttpUrl.toJwksUrl(): HttpUrl = issuer(JWKS)
 fun HttpUrl.toIssuerUrl(): HttpUrl = issuer()
 fun HttpUrl.toUserInfoUrl(): HttpUrl = issuer(USER_INFO)
+fun HttpUrl.toFrontchannelLogout(): HttpUrl = issuer(FRONTCHANNEL_LOGOUT)
+fun HttpUrl.toBackchannelLogout(): HttpUrl = issuer(BACKCHANNEL_LOGOUT)
 fun HttpUrl.toDebuggerUrl(): HttpUrl = issuer(DEBUGGER)
 fun HttpUrl.toDebuggerCallbackUrl(): HttpUrl = issuer(DEBUGGER_CALLBACK)
 

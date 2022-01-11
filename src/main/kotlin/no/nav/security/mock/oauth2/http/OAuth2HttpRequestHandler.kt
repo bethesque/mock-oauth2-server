@@ -10,17 +10,22 @@ import com.nimbusds.oauth2.sdk.GrantType.REFRESH_TOKEN
 import com.nimbusds.oauth2.sdk.OAuth2Error
 import com.nimbusds.oauth2.sdk.ParseException
 import com.nimbusds.openid.connect.sdk.AuthenticationRequest
+import com.nimbusds.openid.connect.sdk.BackChannelLogoutRequest
 import io.netty.handler.codec.http.HttpHeaderNames
 import mu.KotlinLogging
 import no.nav.security.mock.oauth2.OAuth2Config
 import no.nav.security.mock.oauth2.OAuth2Exception
 import no.nav.security.mock.oauth2.debugger.DebuggerRequestHandler
 import no.nav.security.mock.oauth2.extensions.OAuth2Endpoints.AUTHORIZATION
+import no.nav.security.mock.oauth2.extensions.OAuth2Endpoints.BACKCHANNEL_LOGOUT
 import no.nav.security.mock.oauth2.extensions.OAuth2Endpoints.END_SESSION
+import no.nav.security.mock.oauth2.extensions.OAuth2Endpoints.FRONTCHANNEL_LOGOUT
 import no.nav.security.mock.oauth2.extensions.OAuth2Endpoints.JWKS
 import no.nav.security.mock.oauth2.extensions.OAuth2Endpoints.OAUTH2_WELL_KNOWN
 import no.nav.security.mock.oauth2.extensions.OAuth2Endpoints.OIDC_WELL_KNOWN
 import no.nav.security.mock.oauth2.extensions.OAuth2Endpoints.TOKEN
+import no.nav.security.mock.oauth2.extensions.isBackChannelLogout
+import no.nav.security.mock.oauth2.extensions.isFrontChannelLogout
 import no.nav.security.mock.oauth2.extensions.isPrompt
 import no.nav.security.mock.oauth2.extensions.issuerId
 import no.nav.security.mock.oauth2.extensions.toIssuerUrl
@@ -81,6 +86,7 @@ class OAuth2HttpRequestHandler(private val config: OAuth2Config) {
         token()
         endSession()
         userInfo(config.tokenProvider)
+        frontChannelLogout()
         preflight()
         get("/favicon.ico") { OAuth2HttpResponse(status = 200) }
         attach(debuggerRequestHandler)
@@ -148,6 +154,22 @@ class OAuth2HttpRequestHandler(private val config: OAuth2Config) {
                 HttpHeaderNames.ACCESS_CONTROL_ALLOW_HEADERS.toString(), "*"
             )
         )
+    }
+
+    private fun Route.Builder.frontChannelLogout() = any(FRONTCHANNEL_LOGOUT, BACKCHANNEL_LOGOUT) {
+        log.debug("handle channel logout request $it")
+        if (it.url.isFrontChannelLogout()) {
+            val sid = it.url.queryParameter("sid")
+            val sessionId = it.url.queryParameter("sid")
+            // send to frontchannel_logout_uri
+            html("logged out")
+        }
+        if (it.url.isBackChannelLogout()) {
+            val backChannelLogout = BackChannelLogoutRequest(it.url.toUri(), tokenCallbackFromQueueOrDefault(it.url.issuerId()))
+
+            // send to backchannel_logout_uri
+
+        }
     }
 
     private fun tokenCallbackFromQueueOrDefault(issuerId: String): OAuth2TokenCallback =
